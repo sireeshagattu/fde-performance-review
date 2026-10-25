@@ -30,38 +30,8 @@ def validate_payload(payload):
         error = ErrorResponse(code="INVALID_PAYLOAD", message="teamwork_rating must be between 1 and 5")
         raise Exception(error.message)
     if not hasattr(payload, "comments") or payload.comments is None:
-        error = ErrorResponse(code="INVALID_PAYLOAD", message="comments is required")
-        raise Exception(error.message)
-    
-#gururaj
-class ReviewNotFoundError(Exception):
-    def __init__(self, review_id):
-        self.review_id = review_id
-        super().__init__(f"No review exists with id {review_id}.")
+        raise ValueError({"error":"comments is required"})
 
-#gururaj
-def _to_review(row):
-    return Review(**row, status=ReviewStatus.COMPLETED)
-
-#gururaj
-def list_reviews(employee_id=None, period_id=None):
-    rows = prRepo.list_reviews(employee_id=employee_id, period_id=period_id)
-    return [_to_review(row) for row in rows]
-
-#gururaj
-def get_review(review_id):
-    row = prRepo.get_review(review_id)
-    if row is None:
-        raise ReviewNotFoundError(review_id)
-    return _to_review(row)
-
-def check_performance_review_exists(employee_id: int, period_id: int):
-    existing_reviews = list_reviews(employee_id, period_id)
-    if existing_reviews:
-        error = ErrorResponse(code="INVALID_PAYLOAD", message="A review for this employee and period already exists")
-        raise Exception(error.message)
-
-   
 
 def calculate_average_rating(quality: int, delivery: int, teamwork: int) -> float:
     return (quality + delivery + teamwork) / 3

@@ -14,4 +14,8 @@ def check_review_period_open(period_id: int):
         raise Exception(error.message)
 
 def get_All_Review_Periods() -> list[review_periods]: 
+<<<<<<< HEAD
     return rpRepo.get_all_review_periods()  
+=======
+    return rpRepo.get_all_review_periods()  
+>>>>>>> main

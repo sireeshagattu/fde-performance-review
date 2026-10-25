@@ -1,7 +1,9 @@
 from typing import Optional
 
 import psycopg
-from fastapi import APIRouter, FastAPI, Path, Query, Request
+from fastapi import APIRouter, FastAPI, HTTPException, Path, Query, Request
+from models.Employee import Employee
+import services.EmployeeService as empService
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models.PerformanceReview import performance_review_create
@@ -58,6 +60,15 @@ def list_reviews(
 ):
     return prService.list_reviews(employee_id=employee_id, period_id=period_id)
 
+@app.get("/employees", response_model=list[Employee], tags=["Employees"])
+def get_employees():
+    try:
+        return empService.get_all_employees()
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to fetch employees"
+        )
 
 @router.get(
     "/reviews/{id}",
@@ -97,5 +108,14 @@ def get_employees():
 def get_review_periods():
     review_periods = review_period_service.get_all_review_periods_service()
     return {"review_periods": review_periods}
+
+app.include_router(router)
+
+@router.get("/employees")
+def get_employees():
+    employees = empService.get_all_employees()
+    return {"employees": employees}
+
+
 
 app.include_router(router)
