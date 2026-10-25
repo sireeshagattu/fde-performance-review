@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 from repositories import ReviewPeriodRepository as rpRepo
 from models.ReviewPeriod import review_periods
 from models.ErrorResponse import ErrorResponse
@@ -17,4 +15,3 @@ def check_review_period_open(period_id: int):
 
 def get_All_Review_Periods() -> list[review_periods]: 
     return rpRepo.get_all_review_periods()  
->>>>>>> Stashed changes

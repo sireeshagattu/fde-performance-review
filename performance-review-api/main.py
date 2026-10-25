@@ -5,14 +5,9 @@ from fastapi import APIRouter, FastAPI, Path, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models.PerformanceReview import performance_review_create
-<<<<<<< Updated upstream
-import services.PerformanceReviewService as service
-
-=======
 import services.PerformanceReviewService as prService
 
 import services.ReviewPeriodService as review_period_service
->>>>>>> Stashed changes
 from models.ErrorResponse import ErrorResponse
 from models.PerformanceReview import Review
 
@@ -93,8 +88,6 @@ def create_performance_review(payload: performance_review_create):
     prService.save_performance_review(payload)
     return {"message": "Performance review created successfully"}
 
-<<<<<<< Updated upstream
-=======
 @router.get("/employees")
 def get_employees():
     employees = employee_service.get_all_employees()
@@ -106,4 +99,3 @@ def get_review_periods():
     return {"review_periods": review_periods}
 
 app.include_router(router)
->>>>>>> Stashed changes

@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 from models.ReviewPeriod import review_periods
 
 from db.database import get_connection
@@ -35,4 +33,3 @@ def get_review_period(period_id: int) -> review_periods:
     if rev_period is None:
         return None
     return review_periods(**rev_period)
->>>>>>> Stashed changes
