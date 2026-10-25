@@ -1,0 +1,166 @@
+/* ---------- The card around the whole screen ---------- */
+.review-list {
+  text-align: left;                /* overrides the app-wide centring from index.css */
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.review-list h2 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* ---------- Filter bar ---------- */
+.review-filters {
+  display: flex;                   /* put the fields side by side */
+  flex-wrap: wrap;                 /* wrap onto a new line on narrow screens */
+  align-items: flex-end;           /* line up the bottoms (button with dropdowns) */
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;          /* label text ABOVE the dropdown */
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+/* Styles the teammates' dropdowns only inside this screen */
+.review-filters select {
+  min-width: 220px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.search-button {
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #2563eb;             /* same blue as the active side-menu item */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background: #1d4ed8;
+}
+
+.search-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Table ---------- */
+.review-table-wrapper {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow-x: auto;                /* scroll sideways instead of overflowing on small screens */
+}
+
+.review-table {
+  width: 100%;
+  border-collapse: collapse;       /* single lines between cells, not double */
+  font-size: 14px;
+}
+
+.review-table th,
+.review-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;             /* keep "Employee Name" on one line */
+}
+
+.review-table th {
+  font-weight: 600;
+  color: var(--text-h);
+  background: var(--code-bg);      /* light grey header row */
+}
+
+.review-table td {
+  color: var(--text-h);
+}
+
+.review-table tbody tr:last-child td {
+  border-bottom: none;             /* the wrapper already draws the bottom edge */
+}
+
+.review-table tbody tr:hover {
+  background: var(--code-bg);
+}
+
+.review-table .center {
+  text-align: center;
+}
+
+.view-button {
+  padding: 0;
+  font-size: 14px;
+  color: #2563eb;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.view-button:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Footer: "Showing…" + pagination ---------- */
+.review-list-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;  /* text on the left, buttons on the right */
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+/* Styles the teammate's Pagination buttons only inside this screen */
+.review-list-footer button {
+  min-width: 36px;
+  height: 36px;
+  margin-left: 6px;
+  font-size: 14px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.review-list-footer button[aria-current="page"] {
+  color: #fff;
+  background: #2563eb;             /* highlight the current page, like the mockup */
+  border-color: #2563eb;
+}
+
+.review-list-footer button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Loading / empty / error messages ---------- */
+.review-message {
+  padding: 32px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.review-message.error {
+  color: #b91c1c;
+  border-color: #fca5a5;
+}

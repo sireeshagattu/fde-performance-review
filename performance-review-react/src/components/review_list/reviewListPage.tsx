@@ -4,6 +4,7 @@ import EmployeeDropdown from '../employee/EmployeeDropdown';
 import ReviewPeriodDropdown from '../review_period/ReviewPeriodDropdown';
 import Pagination from '../pagination/Pagination';
 import ReviewTable from './ReviewTable';
+import './ReviewList.css';
 
 const PAGE_SIZE = 5;   // rows per page, as in the mockup
 
@@ -59,51 +60,57 @@ export default function ReviewListPage() {
   const hasNextPage = currentPage < totalPages;
 
   return (
-    <div>
+    <div className="review-list">
       <h2>Performance Reviews</h2>
 
       {/* Filter bar */}
-      <div>
-        <label>
-          Review Period{" "}
+      <div className="review-filters">
+        <label className="filter-field">
+          Review Period
           <ReviewPeriodDropdown
             value={periodId}
             onChange={setPeriodId}
             placeholder="All Periods"
             onlyOpen={false}
           />
-        </label>{" "}
-        <label>
-          Employee{" "}
+        </label>
+        <label className="filter-field">
+          Employee
           <EmployeeDropdown
             value={employeeId}
             onChange={setEmployeeId}
             placeholder="All Employees"
           />
-        </label>{" "}
-        <button onClick={handleSearch} disabled={loading}>Search</button>
+        </label>
+        <button className="search-button" onClick={handleSearch} disabled={loading}>
+          Search
+        </button>
       </div>
 
       {/* Exactly one of these four blocks is shown */}
-      {loading && <p>Loading reviews…</p>}
+      {loading && <p className="review-message">Loading reviews…</p>}
 
-      {!loading && error && <p style={{ color: "red" }}>{error}</p>}
+      {!loading && error && <p className="review-message error">{error}</p>}
 
-      {!loading && !error && reviews.length === 0 && <p>No reviews found.</p>}
+      {!loading && !error && reviews.length === 0 && (
+        <p className="review-message">No reviews found.</p>
+      )}
 
       {!loading && !error && reviews.length > 0 && (
         <>
           <ReviewTable reviews={pageReviews} />
 
-          <p>
-            Showing {startIndex + 1} to {startIndex + pageReviews.length} of {reviews.length} reviews
-          </p>
-          <Pagination
-            currentPage={currentPage}
-            hasNextPage={hasNextPage}
-            onPageChange={setCurrentPage}
-            totalPages={totalPages}
-          />
+          <div className="review-list-footer">
+            <p>
+              Showing {startIndex + 1} to {startIndex + pageReviews.length} of {reviews.length} reviews
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              hasNextPage={hasNextPage}
+              onPageChange={setCurrentPage}
+              totalPages={totalPages}
+            />
+          </div>
         </>
       )}
     </div>

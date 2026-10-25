@@ -1,3 +1,5 @@
+import './StatusBadge.css';
+
 interface StatusBadgeProps {
   status: string;
 }
