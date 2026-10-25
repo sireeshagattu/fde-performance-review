@@ -4,17 +4,24 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 import EmployeeDropdown from './components/employee/EmployeeDropdown'
+import ReviewPeriodDropdown from './components/review_period/ReviewPeriodDropdown'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [employeeId, setEmployeeId] = useState<number | "">("");
+  const [reviewPeriodId, setReviewPeriodId] = useState<number | "">("");
 
   return (
     <>
       <section id="center">
-        <EmployeeDropdown
-          employees={[]} 
-          onSelect={(employee) => console.log(employee)}
-        />
+  
+      <EmployeeDropdown
+        value={employeeId}
+        onChange={setEmployeeId}
+      />
+      <ReviewPeriodDropdown
+        value={reviewPeriodId}
+        onChange={setReviewPeriodId}
+      />
        </section>
     </>
   )
