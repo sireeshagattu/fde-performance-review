@@ -26,10 +26,7 @@ CREATE TABLE IF NOT EXISTS performance_reviews (
     quality_rating   INTEGER NOT NULL CHECK (quality_rating   BETWEEN 1 AND 5),
     delivery_rating  INTEGER NOT NULL CHECK (delivery_rating  BETWEEN 1 AND 5),
     teamwork_rating  INTEGER NOT NULL CHECK (teamwork_rating  BETWEEN 1 AND 5),
-    average_rating   DECIMAL(3,2) NOT NULL
-        GENERATED ALWAYS AS (
-            ROUND((quality_rating + delivery_rating + teamwork_rating) / 3.0, 2)
-        ) STORED,
+    average_rating   NUMERIC(3,2) NOT NULL,             -- calculated by the API
     comments         TEXT,
     created_at       TIMESTAMP DEFAULT NOW(),
     CONSTRAINT uq_review_per_period UNIQUE (employee_id, period_id)
