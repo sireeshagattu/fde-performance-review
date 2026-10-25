@@ -3,7 +3,7 @@ from typing import Optional
 import psycopg
 from fastapi import APIRouter, FastAPI, HTTPException, Path, Query, Request
 from models.Employee import Employee
-from services.EmployeeService import list_employees
+import services.EmployeeService as empService
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models.PerformanceReview import performance_review_create
@@ -63,7 +63,7 @@ def list_reviews(
 @app.get("/employees", response_model=list[Employee], tags=["Employees"])
 def get_employees():
     try:
-        return list_employees()
+        return empService.get_all_employees()
     except Exception:
         raise HTTPException(
             status_code=500,
@@ -99,11 +99,16 @@ def create_performance_review(payload: performance_review_create):
     prService.save_performance_review(payload)
     return {"message": "Performance review created successfully"}
 
-@app.get("/review-periods")
+@router.post("/review-periods")
 def get_review_periods():
     review_periods = review_period_service.get_all_review_periods_service()
-    return {"review_periods": review_periods}@router.get("/employees")
+    return {"review_periods": review_periods}
+
+@router.get("/employees")
 def get_employees():
-    employees = employee_service.get_all_employees()
+    employees = empService.get_all_employees()
     return {"employees": employees}
 
+
+
+app.include_router(router)
