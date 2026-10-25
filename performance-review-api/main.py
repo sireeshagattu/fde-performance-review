@@ -1,5 +1,6 @@
 from typing import Optional
 
+
 import psycopg
 from fastapi import APIRouter, FastAPI, HTTPException, Path, Query, Request
 from models.Employee import Employee
@@ -8,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models.PerformanceReview import performance_review_create
 import services.PerformanceReviewService as prService
-
+import services.EmployeeService as employee_service
 import services.ReviewPeriodService as review_period_service
 from models.ErrorResponse import ErrorResponse
 from models.PerformanceReview import Review
@@ -40,6 +41,19 @@ async def review_not_found_handler(request: Request, exc: prService.ReviewNotFou
 router = APIRouter(prefix="/api")
 
 
+def _optional_id(value: Optional[str], name: str) -> Optional[int]:
+    # Swagger UI sends blank filters as "" instead of omitting them.
+    if value is None or value.strip() == "":
+        return None
+    try:
+        parsed = int(value)
+    except ValueError:
+        raise HTTPException(status_code=422, detail=f"{name} must be an integer")
+    if parsed < 1:
+        raise HTTPException(status_code=422, detail=f"{name} must be >= 1")
+    return parsed
+
+
 @router.get(
     "/reviews",
     response_model=list[Review],
@@ -53,12 +67,15 @@ router = APIRouter(prefix="/api")
     responses={503: {"model": ErrorResponse, "description": "Database is unavailable."}},
 )
 def list_reviews(
-    employee_id: Optional[int] = Query(
-        None, ge=1, description="employees.id (numeric DB key), not the EMP101-style code", examples=[1]
+    employee_id: Optional[str] = Query(
+        None, description="employees.id (numeric DB key), not the EMP101-style code", examples=["1"]
     ),
-    period_id: Optional[int] = Query(None, ge=1, description="review_periods.id (numeric DB key)", examples=[1]),
+    period_id: Optional[str] = Query(None, description="review_periods.id (numeric DB key)", examples=["1"]),
 ):
-    return prService.list_reviews(employee_id=employee_id, period_id=period_id)
+    return prService.list_reviews(
+        employee_id=_optional_id(employee_id, "employee_id"),
+        period_id=_optional_id(period_id, "period_id"),
+    )
 
 @app.get("/employees", response_model=list[Employee], tags=["Employees"])
 def get_employees():
@@ -99,16 +116,16 @@ def create_performance_review(payload: performance_review_create):
     prService.save_performance_review(payload)
     return {"message": "Performance review created successfully"}
 
-@router.post("/review-periods")
-def get_review_periods():
-    review_periods = review_period_service.get_all_review_periods_service()
-    return {"review_periods": review_periods}
-
 @router.get("/employees")
 def get_employees():
-    employees = empService.get_all_employees()
+    employees = employee_service.get_all_employees()
     return {"employees": employees}
 
-
+@router.get("/review-periods")
+def get_review_periods():
+    rev_periods = review_period_service.get_All_Review_Periods()
+    return {"review_periods": rev_periods}
 
 app.include_router(router)
+
+

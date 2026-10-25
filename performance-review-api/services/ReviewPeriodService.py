@@ -5,11 +5,11 @@ from models.ErrorResponse import ErrorResponse
 
 
 def check_review_period_open(period_id: int): 
-   review_period: review_periods = rpRepo.get_review_period(period_id)
-   if review_period is None:
+   rev_period: review_periods = rpRepo.get_review_period(period_id)
+   if rev_period is None:
         error = ErrorResponse(code="REVIEW_PERIOD_NOT_FOUND", message="Review period not found")
         raise Exception(error.message)
-   if not review_period.status.upper() == "open".upper():
+   if not rev_period.status.upper() == "open".upper():
         error = ErrorResponse(code="REVIEW_PERIOD_NOT_OPEN", message="The review period is not open for submissions")
         raise Exception(error.message)
 
