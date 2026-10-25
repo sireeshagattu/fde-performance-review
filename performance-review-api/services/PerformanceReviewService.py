@@ -58,7 +58,8 @@ def get_review(review_id):
 def check_performance_review_exists(employee_id: int, period_id: int):
     existing_reviews = list_reviews(employee_id, period_id)
     if existing_reviews:
-        raise_api_exception(400, "A review for this employee and period already exists")
+        error = ErrorResponse(code="INVALID_PAYLOAD", message="A review for this employee and period already exists")
+        raise Exception(error.message)
 
    
 
