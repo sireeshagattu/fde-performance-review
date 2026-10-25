@@ -1,6 +1,13 @@
 from pydantic import BaseModel
-from sqlalchemy import VARCHAR
 
+
+class performance_review_create(BaseModel):
+    employee_id: int
+    period_id: int
+    quality_rating: int
+    delivery_rating: int
+    teamwork_rating: int
+    comments: str = ""
 
 
 class performance_reviews(BaseModel):

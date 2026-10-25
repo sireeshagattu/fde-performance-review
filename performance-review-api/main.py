@@ -1,8 +1,8 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from app.models.ReviewPeriod import review_periods as review_period
-from app.repositories.ReviewPeriodRepository import save_review
+from models.PerformanceReview import performance_review_create
+import services.PerformanceReviewService as service
 
 
 app = FastAPI()
@@ -15,8 +15,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/review-periods")
-def create_review_period(review_period: review_period):
-    service.create_review_period(review_period)
-    return {"message": "Review period created successfully"}
+@app.post("/performance-reviews")
+def create_performance_review(payload: performance_review_create):
+    service.save_performance_review(payload)
+    return {"message": "Performance review created successfully"}
 
