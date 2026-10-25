@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models.PerformanceReview import performance_review_create
 import services.PerformanceReviewService as service
-
+import services.ReviewPeriodService as review_period_service
 from models.ErrorResponse import ErrorResponse
 from models.PerformanceReview import Review
 from services import services
@@ -80,3 +80,7 @@ def create_performance_review(payload: performance_review_create):
     service.save_performance_review(payload)
     return {"message": "Performance review created successfully"}
 
+@app.get("/review-periods")
+def get_review_periods():
+    review_periods = review_period_service.get_all_review_periods_service()
+    return {"review_periods": review_periods}
