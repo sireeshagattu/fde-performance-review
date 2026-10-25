@@ -5,11 +5,17 @@ from fastapi import APIRouter, FastAPI, Path, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from models.PerformanceReview import performance_review_create
+<<<<<<< Updated upstream
 import services.PerformanceReviewService as service
 
+=======
+import services.PerformanceReviewService as prService
+
+import services.ReviewPeriodService as review_period_service
+>>>>>>> Stashed changes
 from models.ErrorResponse import ErrorResponse
 from models.PerformanceReview import Review
-from services import services
+
 
 app = FastAPI(title="Employee Performance Review Management System API", version="1.0.0")
 
@@ -28,8 +34,8 @@ async def database_unavailable_handler(request: Request, exc: psycopg.Operationa
     return JSONResponse(status_code=503, content=error.model_dump())
 
 
-@app.exception_handler(services.ReviewNotFoundError)
-async def review_not_found_handler(request: Request, exc: services.ReviewNotFoundError):
+@app.exception_handler(prService.ReviewNotFoundError)
+async def review_not_found_handler(request: Request, exc: prService.ReviewNotFoundError):
     error = ErrorResponse(code="REVIEW_NOT_FOUND", message=str(exc))
     return JSONResponse(status_code=404, content=error.model_dump())
 
@@ -55,7 +61,7 @@ def list_reviews(
     ),
     period_id: Optional[int] = Query(None, ge=1, description="review_periods.id (numeric DB key)", examples=[1]),
 ):
-    return services.list_reviews(employee_id=employee_id, period_id=period_id)
+    return prService.list_reviews(employee_id=employee_id, period_id=period_id)
 
 
 @router.get(
@@ -71,12 +77,33 @@ def list_reviews(
     },
 )
 def get_review(id: int = Path(..., ge=1, description="Numeric primary key of performance_reviews.id", examples=[101])):
-    return services.get_review(id)
+    return prService.get_review(id)
 
 
-app.include_router(router)
-@app.post("/performance-reviews")
+
+@router.post("/performance-reviews",
+             response_model=dict, 
+             summary="Create a new performance review", 
+             description="Create a new performance review", 
+             tags=["Mandatory - Reviews"],operation_id="createPerformanceReview",
+             responses={400: {"model": ErrorResponse, "description": "Invalid payload"},
+                        503: {"model": ErrorResponse, "description": "Database is unavailable."}}
+             )
 def create_performance_review(payload: performance_review_create):
-    service.save_performance_review(payload)
+    prService.save_performance_review(payload)
     return {"message": "Performance review created successfully"}
 
+<<<<<<< Updated upstream
+=======
+@router.get("/employees")
+def get_employees():
+    employees = employee_service.get_all_employees()
+    return {"employees": employees}
+
+@router.get("/review-periods")
+def get_review_periods():
+    review_periods = review_period_service.get_all_review_periods_service()
+    return {"review_periods": review_periods}
+
+app.include_router(router)
+>>>>>>> Stashed changes
