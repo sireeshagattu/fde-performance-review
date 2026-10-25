@@ -1,11 +1,15 @@
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Query
+
+import psycopg
+from fastapi import APIRouter, FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.models.ReviewPeriod import review_periods as review_period
-from app.repositories.ReviewPeriodRepository import save_review
+from fastapi.responses import JSONResponse
 
+from models.ErrorResponse import ErrorResponse
+from models.PerformanceReview import Review
+from services import services
 
-app = FastAPI()
+app = FastAPI(title="Employee Performance Review Management System API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,8 +19,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/review-periods")
-def create_review_period(review_period: review_period):
-    service.create_review_period(review_period)
-    return {"message": "Review period created successfully"}
 
+@app.exception_handler(psycopg.OperationalError)
+async def database_unavailable_handler(request: Request, exc: psycopg.OperationalError):
+    error = ErrorResponse(code="DATABASE_UNAVAILABLE", message="Database is unavailable. Try again later.")
+    return JSONResponse(status_code=503, content=error.model_dump())
+
+
+router = APIRouter(prefix="/api")
+
+
+@router.get(
+    "/reviews",
+    response_model=list[Review],
+    summary="List performance reviews",
+    description="Returns performance reviews, newest first, optionally filtered by employee and/or review period.",
+    tags=["Mandatory - Reviews"],
+    operation_id="listReviews",
+    responses={503: {"model": ErrorResponse, "description": "Database is unavailable."}},
+)
+def list_reviews(
+    employee_id: Optional[int] = Query(None, ge=1, description="Only return reviews for this employee (internal ID)."),
+    period_id: Optional[int] = Query(None, ge=1, description="Only return reviews for this review period."),
+):
+    return services.list_reviews(employee_id=employee_id, period_id=period_id)
+
+
+app.include_router(router)
