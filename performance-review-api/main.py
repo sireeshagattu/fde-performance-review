@@ -1,7 +1,7 @@
 from typing import Optional
 
 import psycopg
-from fastapi import APIRouter, FastAPI, Query, Request
+from fastapi import APIRouter, FastAPI, Path, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -26,23 +26,50 @@ async def database_unavailable_handler(request: Request, exc: psycopg.Operationa
     return JSONResponse(status_code=503, content=error.model_dump())
 
 
+@app.exception_handler(services.ReviewNotFoundError)
+async def review_not_found_handler(request: Request, exc: services.ReviewNotFoundError):
+    error = ErrorResponse(code="REVIEW_NOT_FOUND", message=str(exc))
+    return JSONResponse(status_code=404, content=error.model_dump())
+
+
 router = APIRouter(prefix="/api")
 
 
 @router.get(
     "/reviews",
     response_model=list[Review],
-    summary="List performance reviews",
-    description="Returns performance reviews, newest first, optionally filtered by employee and/or review period.",
+    summary="List submitted performance reviews",
+    description=(
+        "Return reviews for the HR review register; optionally filter by the numeric employee primary key "
+        "and review period primary key. An empty result is []."
+    ),
     tags=["Mandatory - Reviews"],
     operation_id="listReviews",
     responses={503: {"model": ErrorResponse, "description": "Database is unavailable."}},
 )
 def list_reviews(
-    employee_id: Optional[int] = Query(None, ge=1, description="Only return reviews for this employee (internal ID)."),
-    period_id: Optional[int] = Query(None, ge=1, description="Only return reviews for this review period."),
+    employee_id: Optional[int] = Query(
+        None, ge=1, description="employees.id (numeric DB key), not the EMP101-style code", examples=[1]
+    ),
+    period_id: Optional[int] = Query(None, ge=1, description="review_periods.id (numeric DB key)", examples=[1]),
 ):
     return services.list_reviews(employee_id=employee_id, period_id=period_id)
+
+
+@router.get(
+    "/reviews/{id}",
+    response_model=Review,
+    summary="Get one submitted review by ID",
+    description="Optional classroom extension powering the read-only Review Details screen.",
+    tags=["Optional - Review Details"],
+    operation_id="getReviewById",
+    responses={
+        404: {"model": ErrorResponse, "description": "Review not found"},
+        503: {"model": ErrorResponse, "description": "Database is unavailable."},
+    },
+)
+def get_review(id: int = Path(..., ge=1, description="Numeric primary key of performance_reviews.id", examples=[101])):
+    return services.get_review(id)
 
 
 app.include_router(router)

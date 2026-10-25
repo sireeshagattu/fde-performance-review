@@ -1,6 +1,6 @@
 from db.database import get_connection
 
-_LIST_REVIEWS_SQL = """
+_REVIEWS_SQL = """
     SELECT pr.id,
            pr.employee_id,
            e.employee_id AS employee_code,
@@ -29,9 +29,14 @@ def list_reviews(employee_id=None, period_id=None):
         clauses.append("pr.period_id = %s")
         params.append(period_id)
 
-    sql = _LIST_REVIEWS_SQL
+    sql = _REVIEWS_SQL
     if clauses:
         sql += " WHERE " + " AND ".join(clauses)
     sql += " ORDER BY pr.created_at DESC, pr.id DESC"
     with get_connection() as conn:
         return conn.execute(sql, params).fetchall()
+
+
+def get_review(review_id):
+    with get_connection() as conn:
+        return conn.execute(_REVIEWS_SQL + " WHERE pr.id = %s", (review_id,)).fetchone()

@@ -173,3 +173,69 @@ def test_openapi_documents_endpoint():
         "comments", "status", "created_at",
     } <= set(review["properties"])
     assert "503" in operation["responses"]
+
+
+# GET /api/reviews/{id}
+
+
+def test_get_review_by_id(seed):
+    review_id = seed["reviews"][0]
+    response = client.get(f"{URL}/{review_id}")
+    assert response.status_code == 200
+    item = response.json()
+    assert item["id"] == review_id
+    assert item["employee_id"] == seed["employees"][0]
+    assert item["employee_code"] == seed["codes"][0]
+    assert item["period_id"] == seed["periods"][0]
+    assert item["average_rating"] == 4.33
+    assert isinstance(item["average_rating"], float)
+    assert item["status"] == "Completed"
+    assert item["created_at"] == "2026-10-25T09:30:00Z"
+
+
+def test_get_review_matches_list_item(seed):
+    review_id = seed["reviews"][2]
+    [listed] = [i for i in client.get(URL).json() if i["id"] == review_id]
+    assert client.get(f"{URL}/{review_id}").json() == listed
+
+
+def test_get_unknown_review_returns_404(seed):
+    response = client.get(f"{URL}/999999999")
+    assert response.status_code == 404
+    assert response.json() == {"code": "REVIEW_NOT_FOUND", "message": "No review exists with id 999999999."}
+
+
+def test_get_review_non_integer_returns_422():
+    response = client.get(f"{URL}/abc")
+    assert response.status_code == 422
+    error = response.json()["detail"][0]
+    assert error["loc"] == ["path", "id"]
+    assert error["type"] == "int_parsing"
+    assert error["msg"].startswith("Input should be a valid integer")
+
+
+@pytest.mark.parametrize("value", [0, -1])
+def test_get_review_below_one_returns_422(value):
+    response = client.get(f"{URL}/{value}")
+    assert response.status_code == 422
+    error = response.json()["detail"][0]
+    assert error["loc"] == ["path", "id"]
+    assert error["type"] == "greater_than_equal"
+
+
+def test_openapi_documents_get_review():
+    spec = client.get("/openapi.json").json()
+    operation = spec["paths"]["/api/reviews/{id}"]["get"]
+    assert operation["operationId"] == "getReviewById"
+    assert operation["tags"] == ["Optional - Review Details"]
+
+    [param] = operation["parameters"]
+    assert param["name"] == "id"
+    assert param["in"] == "path"
+    assert param["required"] is True
+    assert param["schema"]["minimum"] == 1
+
+    responses = operation["responses"]
+    assert responses["200"]["content"]["application/json"]["schema"]["$ref"] == "#/components/schemas/Review"
+    assert responses["404"]["content"]["application/json"]["schema"]["$ref"] == "#/components/schemas/ErrorResponse"
+    assert "422" in responses

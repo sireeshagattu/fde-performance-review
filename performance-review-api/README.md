@@ -1,10 +1,12 @@
 # Employee Performance Review Management System API
 
-FastAPI service backed by PostgreSQL (psycopg 3, plain SQL). It currently implements one endpoint:
+FastAPI service backed by PostgreSQL (psycopg 3, plain SQL). The contract is
+`employee-performance-review-openapi.json`. Implemented endpoints:
 
-| Method | Path           | Description                                                        |
-| ------ | -------------- | ------------------------------------------------------------------ |
-| GET    | `/api/reviews` | List reviews, newest first. Optional `employee_id` and `period_id` filters. |
+| Method | Path                | Description                                                        |
+| ------ | ------------------- | ------------------------------------------------------------------ |
+| GET    | `/api/reviews`      | List reviews, newest first. Optional `employee_id` and `period_id` filters. |
+| GET    | `/api/reviews/{id}` | One review by ID; `404 REVIEW_NOT_FOUND` if it doesn't exist.      |
 
 ## Layout
 
