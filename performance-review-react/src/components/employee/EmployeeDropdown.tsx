@@ -1,13 +1,16 @@
 import type Employee from '../../interfaces/Employee';
-import React,{useState, useEffect } from 'react';   
+import React,{useState, useEffect } from 'react'; 
+
 interface EmployeeDropdownProps {
   value: number | "";
   onChange: (employeeId: number |"") => void;
+  placeholder?: string; // NEW: optional placeholder prop
 }
 
 export default function EmployeeDropdown({
   value,
   onChange,
+  placeholder = "Select Employee", 
 }: EmployeeDropdownProps) {
   const [employees, setEmployees] = useState<Employee[]>([]);
 
@@ -22,7 +25,7 @@ export default function EmployeeDropdown({
       value={value}
       onChange={(e) =>     onChange(e.target.value === "" ? "" : Number(e.target.value))}
     >
-      <option value="">Select Employee</option>
+      <option value="">{placeholder}</option>
 
       {employees.map((employee) => (
         <option key={employee.id} value={employee.id}>

@@ -3,11 +3,15 @@ import React,{useState, useEffect } from 'react';
 interface ReviewPeriodDropdownProps {
   value: number | "";
   onChange: (reviewPeriodId: number |"") => void;
+  placeholder?: string;
+   onlyOpen?: boolean; 
 }
 
 export default function ReviewPeriodDropdown({
   value,
   onChange,
+   placeholder = "Select Review Period", 
+   onlyOpen = true,
 }: ReviewPeriodDropdownProps) {
   const [reviewPeriods, setReviewPeriods] = useState<ReviewPeriod[]>([]);
 
@@ -22,10 +26,10 @@ export default function ReviewPeriodDropdown({
       value={value}
       onChange={(e) =>     onChange(e.target.value === "" ? "" : Number(e.target.value))}
     >
-      <option value="">Select Review Period</option>
+      <option value="">{placeholder}</option>
 
       {reviewPeriods.map((reviewPeriod) => (
-        reviewPeriod.status.toUpperCase() === "OPEN" && (
+        (!onlyOpen || reviewPeriod.status.toUpperCase() === "OPEN") && (
         <option key={reviewPeriod.id} value={reviewPeriod.id}>
           {reviewPeriod.name}
         </option>

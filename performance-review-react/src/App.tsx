@@ -2,12 +2,12 @@
 import { useState } from "react";
 import SideNav from "./components/navigation/SideNav";
 import EmployeeDropdown from './components/employee/EmployeeDropdown'
-import ReviewPeriodDropdown from './components/review_period/ReviewPeriodDropdown'
+import ReviewListPage from './components/review_list/reviewListPage'
+
 
 export default function App() {
   const [page, setPage] = useState("dashboard");
    const [employeeId, setEmployeeId] = useState<number | "">("");
-  const [reviewPeriodId, setReviewPeriodId] = useState<number | "">("");
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
@@ -19,10 +19,7 @@ export default function App() {
         value={employeeId}
         onChange={setEmployeeId}
       />}
-        {page === "reviews" && <ReviewPeriodDropdown
-        value={reviewPeriodId}
-        onChange={setReviewPeriodId}
-      />}
+        {page === "reviews" && <ReviewListPage />}
         {page === "submit-review" && <h2>Submit Review</h2>}
       </div>
     </div>
