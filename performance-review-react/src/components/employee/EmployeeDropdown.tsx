@@ -1,20 +1,28 @@
 import type Employee from '../../interfaces/Employee';
-import React,{useState, useEffect } from 'react';   
+import React,{useState, useEffect } from 'react'; 
+
 interface EmployeeDropdownProps {
   value: number | "";
   onChange: (employeeId: number |"") => void;
+  placeholder?: string; // NEW: optional placeholder prop
 }
 
 export default function EmployeeDropdown({
   value,
   onChange,
+  placeholder = "Select Employee", 
 }: EmployeeDropdownProps) {
   const [employees, setEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:8000/api/employees")
-      .then((res) => res.json())
-      .then((data) => { console.log(data); setEmployees(data.employees); });
+      .then((res) => {
+        // Treat 4xx/5xx answers (e.g. 503 database down) as errors
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
+        return res.json();
+      })
+      .then((data) => { console.log(data); setEmployees(data.employees ?? []); })
+      .catch(() => setEmployees([]));   // keep an empty list so .map below never sees undefined
   }, []);
 
   return (
@@ -22,7 +30,7 @@ export default function EmployeeDropdown({
       value={value}
       onChange={(e) =>     onChange(e.target.value === "" ? "" : Number(e.target.value))}
     >
-      <option value="">Select Employee</option>
+      <option value="">{placeholder}</option>
 
       {employees.map((employee) => (
         <option key={employee.id} value={employee.id}>
