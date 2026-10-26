@@ -37,6 +37,12 @@ async def review_not_found_handler(request: Request, exc: prService.ReviewNotFou
     error = ErrorResponse(code="REVIEW_NOT_FOUND", message=str(exc))
     return JSONResponse(status_code=404, content=error.model_dump())
 
+@app.exception_handler(prService.ReviewAlreadyExistsError)
+async def review_already_exists_handler(request: Request, exc: prService.ReviewAlreadyExistsError):
+    error = ErrorResponse(code="REVIEW_ALREADY_EXISTS", message=str(exc))
+    return JSONResponse(status_code=400, content=error.model_dump())
+
+
 
 router = APIRouter(prefix="/api")
 

@@ -5,12 +5,14 @@ interface EmployeeDropdownProps {
   value: number | "";
   onChange: (employeeId: number |"") => void;
   placeholder?: string; // NEW: optional placeholder prop
+  onlyActive?: boolean; // true = hide Inactive employees
 }
 
 export default function EmployeeDropdown({
   value,
   onChange,
-  placeholder = "Select Employee", 
+  placeholder = "Select Employee",
+  onlyActive = false,
 }: EmployeeDropdownProps) {
   const [employees, setEmployees] = useState<Employee[]>([]);
 
@@ -25,6 +27,11 @@ export default function EmployeeDropdown({
       .catch(() => setEmployees([]));   // keep an empty list so .map below never sees undefined
   }, []);
 
+  // Only keep Active employees when asked to; otherwise show everyone
+  const visibleEmployees = onlyActive
+    ? employees.filter((employee) => employee.status.toUpperCase() === "ACTIVE")
+    : employees;
+
   return (
     <select
       value={value}
@@ -32,7 +39,7 @@ export default function EmployeeDropdown({
     >
       <option value="">{placeholder}</option>
 
-      {employees.map((employee) => (
+      {visibleEmployees.map((employee) => (
         <option key={employee.id} value={employee.id}>
           {employee.employee_id} - {employee.name}
         </option>

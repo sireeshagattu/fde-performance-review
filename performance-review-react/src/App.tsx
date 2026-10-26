@@ -3,6 +3,8 @@ import { useState } from "react";
 import SideNav from "./components/navigation/SideNav";
 import EmployeeDropdown from './components/employee/EmployeeDropdown'
 import ReviewListPage from './components/review_list/reviewListPage'
+import ReviewFormPage from './components/review_form/ReviewFormPage'
+
 
 
 export default function App() {
@@ -20,7 +22,8 @@ export default function App() {
         onChange={setEmployeeId}
       />}
         {page === "reviews" && <ReviewListPage />}
-        {page === "submit-review" && <h2>Submit Review</h2>}
+        {page === "submit-review" && <ReviewFormPage />}
+
       </div>
     </div>
   );

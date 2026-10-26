@@ -39,6 +39,13 @@ class ReviewNotFoundError(Exception):
         self.review_id = review_id
         super().__init__(f"No review exists with id {review_id}.")
 
+class ReviewAlreadyExistsError(Exception):
+    def __init__(self, employee_id, period_id):
+        self.employee_id = employee_id
+        self.period_id = period_id
+        super().__init__("A review for this employee and period already exists")
+
+
 #gururaj
 def _to_review(row):
     return Review(**row, status=ReviewStatus.COMPLETED)
@@ -58,7 +65,7 @@ def get_review(review_id):
 def check_performance_review_exists(employee_id: int, period_id: int):
     existing_reviews = list_reviews(employee_id, period_id)
     if existing_reviews:
-        raise_api_exception(400, "A review for this employee and period already exists")
+        raise ReviewAlreadyExistsError(employee_id, period_id)
 
    
 
