@@ -17,13 +17,13 @@ export default function App() {
         {page === "dashboard" && <h2>Dashboard</h2>}
         {page === "employees" &&   <EmployeeDropdown
         value={employeeId}
-        onChange={setEmployeeId}
+        onChange={setEmployeeId}  // Replace dropdown component with  employee table component here optional
       />}
         {page === "reviews" && <ReviewPeriodDropdown
         value={reviewPeriodId}
-        onChange={setReviewPeriodId}
+        onChange={setReviewPeriodId} // replace dropdown component with Employee performance review component ( Mandatory)
       />}
-        {page === "submit-review" && <h2>Submit Review</h2>}
+        {page === "submit-review" && <h2>Submit Review</h2>} /// replace h2 with submit review component here  (Mandatory)
       </div>
     </div>
   );
