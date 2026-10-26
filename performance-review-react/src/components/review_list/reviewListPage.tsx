@@ -17,12 +17,21 @@ function fetchReviews(periodId: number | "", employeeId: number | ""): Promise<R
   if (employeeId !== "") params.append("employee_id", String(employeeId));
 
   return fetch(`http://localhost:8000/api/reviews?${params}`)
-    .then((res) => {
-      // Treat 4xx/5xx answers (e.g. 503 database down) as errors
+    .then(async (res) => {
+      // Treat 4xx/5xx answers (e.g. 503 database down) as errors.
+      // The API sends { code, message } on errors, so show its message.
       if (!res.ok) {
-        throw new Error(`Server responded ${res.status}`);
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.message ?? `Server responded ${res.status}`);
       }
       return res.json();
+    })
+    .catch((err) => {
+      // fetch itself rejects with a TypeError when the server can't be reached
+      if (err instanceof TypeError) {
+        throw new Error("Cannot reach the server. Check your connection and try again.");
+      }
+      throw err;   // API errors from above pass through unchanged
     });
 }
 
@@ -38,7 +47,7 @@ export default function ReviewListPage() {
   useEffect(() => {
     fetchReviews("", "")
       .then(setReviews)
-      .catch(() => setError("Could not load reviews. Please try again."))
+      .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
@@ -49,7 +58,7 @@ export default function ReviewListPage() {
     setCurrentPage(1);   // new results start at page 1
     fetchReviews(periodId, employeeId)
       .then(setReviews)
-      .catch(() => setError("Could not load reviews. Please try again."))
+      .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
   }
 

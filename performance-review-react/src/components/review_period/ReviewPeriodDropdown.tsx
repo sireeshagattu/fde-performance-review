@@ -17,8 +17,13 @@ export default function ReviewPeriodDropdown({
 
   useEffect(() => {
     fetch("http://localhost:8000/api/review-periods")
-      .then((res) => res.json())
-      .then((data) => {  setReviewPeriods(data.review_periods); });
+      .then((res) => {
+        // Treat 4xx/5xx answers (e.g. 503 database down) as errors
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {  setReviewPeriods(data.review_periods ?? []); })
+      .catch(() => setReviewPeriods([]));   // keep an empty list so .map below never sees undefined
   }, []);
 
   return (
