@@ -16,11 +16,7 @@ export default function App() {
       <SideNav page={page} setPage={setPage} />
 
       <div style={{ flex: 1, padding: "20px" }}>
-        {page === "dashboard" && <h2>Dashboard</h2>}
-        {page === "employees" &&   <EmployeeDropdown
-        value={employeeId}
-        onChange={setEmployeeId}  // Replace dropdown component with  employee table component here optional
-      />}
+      
       
         {page === "dashboard" && <h2>Dashboard</h2>}
         {page === "reviews" && <ReviewListPage />}
@@ -29,7 +25,7 @@ export default function App() {
         onChange={setEmployeeId}  // Replace dropdown component with  employee table component here optional
       />}
       
-        {page === "submit-review" && <h2>Submit Review</h2>} /// replace h2 with submit review component here  (Mandatory)
+        {page === "submit-review" && <ReviewFormPage />} /// replace h2 with submit review component here  (Mandatory)
       </div>
     </div>
   );
