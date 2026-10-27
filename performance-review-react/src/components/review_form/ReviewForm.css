@@ -1,0 +1,137 @@
+/* ---------- The card around the whole form ---------- */
+.review-form {
+  max-width: 720px;
+  text-align: left;                /* overrides the app-wide centring from index.css */
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.review-form h2 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.review-form h3 {
+  font-size: 16px;
+  color: var(--text-h);
+  margin: 24px 0 12px;
+}
+
+/* ---------- Employee + Review Period side by side ---------- */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;                 /* stack on narrow screens */
+  gap: 16px;
+}
+
+.form-row .form-field {
+  flex: 1;                         /* each dropdown takes half the width */
+  min-width: 220px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;          /* label text ABOVE the input */
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+/* Styles the teammates' dropdowns only inside this screen */
+.review-form select,
+.review-form textarea {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;            /* textarea uses a monospace font by default */
+  font-weight: normal;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.review-form textarea {
+  resize: vertical;                /* only let the user make it taller */
+}
+
+/* ---------- Star rating rows ---------- */
+.rating-row {
+  display: grid;
+  grid-template-columns: 220px auto 1fr;   /* label | stars | error message */
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.rating-row + .form-field {
+  margin-top: 24px;                /* space between the last rating row and the comments */
+}
+
+/* ---------- Field errors + submit result ---------- */
+.field-error {
+  font-size: 13px;
+  font-weight: normal;
+  color: #b91c1c;
+}
+
+.form-message {
+  margin-top: 16px;
+  padding: 10px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+.form-message.success {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+}
+
+.form-message.error {
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+
+/* ---------- Buttons ---------- */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;       /* buttons on the right, like the mockup */
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reset-button {
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+}
+
+.submit-button {
+  color: #fff;
+  background: #2563eb;             /* same blue as the Search button */
+  border: none;
+}
+
+.submit-button:hover {
+  background: #1d4ed8;
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
